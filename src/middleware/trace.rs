@@ -1,4 +1,4 @@
-use super::{DEFAULT_MESSAGE_LEVEL, DIRECT_CONNECT_IP, X_FORWARDED_FOR, X_REAL_IP, X_REQUEST_ID};
+use super::{DIRECT_CONNECT_IP, X_FORWARDED_FOR, X_REAL_IP, X_REQUEST_ID};
 use axum::{extract::Request, http::HeaderName};
 use std::net::SocketAddr;
 use tower_http::{
@@ -16,7 +16,7 @@ pub struct CustomMakeSpan {
 impl CustomMakeSpan {
     pub fn new() -> Self {
         Self {
-            level: DEFAULT_MESSAGE_LEVEL,
+            level: Level::DEBUG,
             include_headers: false,
         }
     }

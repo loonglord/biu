@@ -1,28 +1,13 @@
 use anyhow::Result;
 use serde::Deserialize;
 use std::io::Write;
-use tracing::Level;
 use tracing_appender::non_blocking::WorkerGuard;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub level: LogLevel,
+    pub level: String,
     pub writer: LogWriter,
-}
-
-#[derive(Debug, Deserialize)]
-pub enum LogLevel {
-    #[serde(rename = "trace")]
-    Trace,
-    #[serde(rename = "debug")]
-    Debug,
-    #[serde(rename = "info")]
-    Info,
-    #[serde(rename = "warn")]
-    Warn,
-    #[serde(rename = "error")]
-    Error,
 }
 
 #[derive(Debug, Deserialize)]
@@ -35,18 +20,6 @@ pub enum LogWriter {
     },
     #[serde(rename = "stdout")]
     Stdout,
-}
-
-impl LogLevel {
-    pub fn to_tracing_level(&self) -> Level {
-        match self {
-            LogLevel::Trace => Level::TRACE,
-            LogLevel::Debug => Level::DEBUG,
-            LogLevel::Info => Level::INFO,
-            LogLevel::Warn => Level::WARN,
-            LogLevel::Error => Level::ERROR,
-        }
-    }
 }
 
 pub fn init_logging(config: &Config) -> Result<WorkerGuard> {
@@ -64,8 +37,7 @@ pub fn init_logging(config: &Config) -> Result<WorkerGuard> {
         LogWriter::Stdout => (Box::new(std::io::stdout()), true),
     };
     let (non_blocking, worker_guard) = tracing_appender::non_blocking(writer);
-    let filter =
-        EnvFilter::from_default_env().add_directive(config.level.to_tracing_level().into());
+    let filter = EnvFilter::try_new(config.level.as_str().to_lowercase())?;
     let layer = tracing_subscriber::fmt::layer()
         .with_ansi(ansi)
         .with_writer(non_blocking);

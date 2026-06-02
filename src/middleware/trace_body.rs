@@ -1,4 +1,3 @@
-use super::{DEFAULT_ERROR_LEVEL, DEFAULT_MESSAGE_LEVEL};
 use axum::{
     body::{Body, Bytes},
     http::{Request, StatusCode},
@@ -40,7 +39,7 @@ pub struct TraceBodyLayer {
 impl TraceBodyLayer {
     pub fn new() -> Self {
         Self {
-            level: DEFAULT_MESSAGE_LEVEL,
+            level: Level::TRACE,
         }
     }
 
@@ -130,10 +129,7 @@ where
     let bytes = match body.collect().await {
         Ok(collected) => collected.to_bytes(),
         Err(err) => {
-            event_dynamic_lvl!(
-                DEFAULT_ERROR_LEVEL,
-                "failed to read {direction} body: {err}"
-            );
+            event_dynamic_lvl!(Level::ERROR, "failed to read {direction} body: {err}");
             return Err(err);
         }
     };
@@ -146,7 +142,7 @@ where
 }
 
 pub fn trace_body() -> Either<TraceBodyLayer, Identity> {
-    if tracing::level_filters::LevelFilter::current() >= DEFAULT_MESSAGE_LEVEL {
+    if tracing::enabled!(target: module_path!(), Level::TRACE) {
         Either::Left(TraceBodyLayer::default())
     } else {
         Either::Right(Identity::default())
