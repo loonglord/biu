@@ -10,11 +10,11 @@ bb8 = "0.9.1"
 config = "0.15.27"
 futures-util = "0.3.34"
 http-body-util = "0.1.5"
-redis = { version = "1.7.1", features = ["bb8", "tokio-comp"] }
+redis = { version = "1.8.0", features = ["bb8", "tokio-comp"] }
 serde = { version = "1.0.229", features = ["derive"] }
 sqlx = { version = "0.9.0", features = ["postgres", "runtime-tokio"] }
 thiserror = "2.0.21"
-tokio = "1.53.3"
+tokio = "1.54.1"
 tower = "0.5.3"
 tower-http = { version = "0.7.1", features = [
     "compression-full",
