@@ -12,7 +12,7 @@ futures-util = "0.3.34"
 http-body-util = "0.1.5"
 redis = { version = "1.8.2", features = ["bb8", "tokio-comp"] }
 serde = { version = "1.0.229", features = ["derive"] }
-sqlx = { version = "0.9.0", features = ["postgres", "runtime-tokio"] }
+sqlx = { version = "0.9.1", features = ["postgres", "runtime-tokio"] }
 thiserror = "2.0.21"
 tokio = "1.54.1"
 tower = "0.5.3"
